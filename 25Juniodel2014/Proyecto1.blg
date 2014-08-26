@@ -1,0 +1,33 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: Proyecto1.aux
+The style file: alpha.bst
+Database file #1: library.bib
+Warning--entry type for "ETSI" isn't style-file defined
+--line 181 of file library.bib
+I was expecting a `,' or a `}'---line 442 of file library.bib
+ : @misc{ISO/IEC 
+ :               12119,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 451 of file library.bib
+ : @misc{ISO 
+ :           9241,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 468 of file library.bib
+ : @misc{ISO/IEC 
+ :               25000,
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 473 of file library.bib
+ : @misc{ISO/IEC 
+ :               25010,
+I'm skipping whatever remains of this entry
+Warning--to sort, need author or key in IEEE1994
+Warning--to sort, need author or key in ISOIEC29119
+Warning--empty booktitle in Andrus
+Warning--can't use both author and editor fields in Bozga2004
+Warning--can't use both author and editor fields in Fix2008
+Warning--can't use both author and editor fields in Gaudel1996
+Warning--empty author in IEEE1994
+Warning--empty journal in IEEE1994
+Warning--empty author in ISOIEC29119
+Warning--empty journal in ISOIEC29119
+Warning--empty note in Mikovski2009
+(There were 4 error messages)
