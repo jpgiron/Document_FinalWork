@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.6.29)  26 AUG 2014 14:24
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2012.6.29)  26 AUG 2014 22:37
 entering extended mode
 **Proyecto1.tex
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.tex"
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.tex"
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
 abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
@@ -16,8 +16,9 @@ romanian, russian, sanskrit, serbian, slovak, slovenian, spanish, swedish, swis
 sgerman, tamil, telugu, turkish, turkmen, ukenglish, ukrainian, uppersorbian, u
 senglishmax, welsh, loaded.
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\thesis.cls" ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ifthen.sty"
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\thesis.cls"
+("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ifthen.sty"
 Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
 )
 
@@ -472,8 +473,8 @@ Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 80.
 )
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\gantt.sty"
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\gantt.sty"
 Package: gantt 2011/03/20 Some macros for drawing gantt diagrams using tkiz v.1
 .3
 
@@ -833,8 +834,8 @@ File: pgflibraryarrows.code.tex 2008/10/27 v2.10 (rcs-revision 1.9)
 )
 \@input{format.aux}
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\format.tex"
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\format.tex"
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\ams\math\amsmath.sty"
 Package: amsmath 2000/07/18 v2.13 AMS math features
 \@mathmargin=\skip60
@@ -960,8 +961,8 @@ Package minitoc Info: I0003
 Package minitoc Info: I0002
 (minitoc)             Autoconfiguration of extensions.
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.mtc0")
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.mtc0")
 Package minitoc Info: I0012
 (minitoc)             Long extensions (Unix-like) will be used.
 Package minitoc Info: I0031
@@ -1057,8 +1058,8 @@ Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
 ) ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\multirow\multirow.sty"
 \bigstrutjot=\dimen176
 )
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\slashbox.sty"
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\slashbox.sty"
 slashbox style by K.Yasuoka, May 1993.
 \@slashboxa=\box46
 \@slashboxb=\box47
@@ -1072,8 +1073,8 @@ slashbox style by K.Yasuoka, May 1993.
 
 Writing index file Proyecto1.idx
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.aux")
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.aux")
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 49.
 LaTeX Font Info:    ... okay on input line 49.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 49.
@@ -1118,10 +1119,10 @@ LaTeX Info: Redefining \ref on input line 49.
 LaTeX Info: Redefining \pageref on input line 49.
 LaTeX Info: Redefining \nameref on input line 49.
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.out")
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.out")
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.out")
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.out")
 \@outlinefile=\write6
  ABD: EveryShipout initializing macros
 *geometry* driver: auto-detecting
@@ -1212,8 +1213,8 @@ Package pdftex.def Info: ./images/pujlogo.pdf used on input line 52.
 
 
 {C:/Users/Administrador/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/
-Users/Administrador/Dropbox/Trabajo de Grado/Documento/LATEX/25 Junio del 2014/
-images/pujlogo.pdf>] [2]
+Users/Administrador/Dropbox/Trabajo de Grado/Documento/TrabajoFinal/25Juniodel2
+014/images/pujlogo.pdf>] [2]
 Underfull \hbox (badness 10000) in paragraph at lines 52--52
 
  []
@@ -1303,14 +1304,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 52--53
 [5] [6
 
 ]
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.toc")
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.toc")
 \tf@toc=\write7
  [7] [8
 
 ]
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\introduccion.tex"
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\introduccion.tex"
 LaTeX Font Info:    Try loading font information for T1+cmtt on input line 56.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\t1cmtt.fd"
@@ -1332,8 +1333,8 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 [10]
 Cap\'{\i }tulo 1.
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\descripcion.tex"
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\descripcion.tex"
 Underfull \hbox (badness 10000) in paragraph at lines 56--63
 
  []
@@ -1352,21 +1353,21 @@ Package Fancyhdr Warning: \headheight is too small (12.0pt):
 ]
 Cap\'{\i }tulo 2.
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\desarrollo.tex" [15]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 67.
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\desarrollo.tex" [15]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 68.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 67.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 68.
  [16]
 <./images/EjemploSDLGR_SDLPR.jpg, id=298, 481.8pt x 361.35pt>
 File: ./images/EjemploSDLGR_SDLPR.jpg Graphic file (type jpg)
 
 <use ./images/EjemploSDLGR_SDLPR.jpg>
-Package pdftex.def Info: ./images/EjemploSDLGR_SDLPR.jpg used on input line 128
+Package pdftex.def Info: ./images/EjemploSDLGR_SDLPR.jpg used on input line 129
 .
 (pdftex.def)             Requested size: 289.08221pt x 216.81168pt.
 
@@ -1374,24 +1375,24 @@ Package pdftex.def Info: ./images/EjemploSDLGR_SDLPR.jpg used on input line 128
 File: ./images/DiagramaMSC.jpg Graphic file (type jpg)
 
 <use ./images/DiagramaMSC.jpg>
-Package pdftex.def Info: ./images/DiagramaMSC.jpg used on input line 154.
+Package pdftex.def Info: ./images/DiagramaMSC.jpg used on input line 155.
 (pdftex.def)             Requested size: 175.47939pt x 79.04475pt.
- [17 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/LATEX/25 Junio 
-del 2014/images/EjemploSDLGR_SDLPR.jpg>]
+ [17 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/TrabajoFinal/25
+Juniodel2014/images/EjemploSDLGR_SDLPR.jpg>]
 <./images/trasl_SDL.jpg, id=318, 237.13594pt x 183.68625pt>
 File: ./images/trasl_SDL.jpg Graphic file (type jpg)
 
 <use ./images/trasl_SDL.jpg>
-Package pdftex.def Info: ./images/trasl_SDL.jpg used on input line 161.
+Package pdftex.def Info: ./images/trasl_SDL.jpg used on input line 162.
 (pdftex.def)             Requested size: 165.994pt x 128.57947pt.
- [18 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/LATEX/25 Junio 
-del 2014/images/DiagramaMSC.jpg> <C:/Users/Administrador/Dropbox/Trabajo de Gra
-do/Documento/LATEX/25 Junio del 2014/images/trasl_SDL.jpg>] [19] <./images/Mode
-loTTCN3.jpg, id=363, 335.00156pt x 239.39438pt>
+ [18 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/TrabajoFinal/25
+Juniodel2014/images/DiagramaMSC.jpg> <C:/Users/Administrador/Dropbox/Trabajo de
+ Grado/Documento/TrabajoFinal/25Juniodel2014/images/trasl_SDL.jpg>] [19]
+<./images/ModeloTTCN3.jpg, id=363, 335.00156pt x 239.39438pt>
 File: ./images/ModeloTTCN3.jpg Graphic file (type jpg)
 
 <use ./images/ModeloTTCN3.jpg>
-Package pdftex.def Info: ./images/ModeloTTCN3.jpg used on input line 323.
+Package pdftex.def Info: ./images/ModeloTTCN3.jpg used on input line 324.
 (pdftex.def)             Requested size: 167.50037pt x 119.69688pt.
 
 
@@ -1402,7 +1403,7 @@ File: ./images/vistaSistemaVerificacion.jpg Graphic file (type jpg)
 
 <use ./images/vistaSistemaVerificacion.jpg>
 Package pdftex.def Info: ./images/vistaSistemaVerificacion.jpg used on input li
-ne 388.
+ne 389.
 (pdftex.def)             Requested size: 286.82376pt x 187.90344pt.
 
 
@@ -1411,24 +1412,40 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 Underfull \vbox (badness 1616) has occurred while \output is active []
 
- [21 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/LATEX/25 Junio 
-del 2014/images/ModeloTTCN3.jpg>] [22 <C:/Users/Administrador/Dropbox/Trabajo d
-e Grado/Documento/LATEX/25 Junio del 2014/images/vistaSistemaVerificacion.jpg>]
-
+ [21 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/TrabajoFinal/25
+Juniodel2014/images/ModeloTTCN3.jpg>] [22 <C:/Users/Administrador/Dropbox/Traba
+jo de Grado/Documento/TrabajoFinal/25Juniodel2014/images/vistaSistemaVerificaci
+on.jpg>]
 <./images/ArquitecturaIF.jpg, id=408, 385.44pt x 372.64218pt>
 File: ./images/ArquitecturaIF.jpg Graphic file (type jpg)
 
 <use ./images/ArquitecturaIF.jpg>
-Package pdftex.def Info: ./images/ArquitecturaIF.jpg used on input line 476.
+Package pdftex.def Info: ./images/ArquitecturaIF.jpg used on input line 477.
 (pdftex.def)             Requested size: 231.26578pt x 223.58702pt.
- [23 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/LATEX/25 Junio 
-del 2014/images/ArquitecturaIF.jpg>] [24]
+ [23 <C:/Users/Administrador/Dropbox/Trabajo de Grado/Documento/TrabajoFinal/25
+Juniodel2014/images/ArquitecturaIF.jpg>]
+[24]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [25]
-[26] [27] [28]
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\gantt.tex"
+[26]
+Overfull \hbox (4.06435pt too wide) in paragraph at lines 638--639
+[]|\T1/cmr/m/n/10 ADMINISTRADOR| 
+ []
+
+
+Overfull \hbox (4.06435pt too wide) in paragraph at lines 640--641
+[]|\T1/cmr/m/n/10 ADMINISTRADOR| 
+ []
+
+
+Overfull \hbox (23.08904pt too wide) in paragraph at lines 634--643
+ [][] 
+ []
+
+[27] [28]
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\gantt.tex"
 \ganttx=\count173
 \ganttheight=\count174
 Missing character: There is no ; in font nullfont!
@@ -1465,8 +1482,8 @@ Missing character: There is no ; in font nullfont!
 ) [29
 
 ])
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.bbl" [30
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.bbl" [30
 
 
 ] [31])
@@ -1484,22 +1501,22 @@ Package minitoc(hints) Warning: W0024
 (minitoc(hints))                Some hints have been written 
 (minitoc(hints))                in the Proyecto1.log file.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 76.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 77.
 [32]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 76.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 77.
 
-("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\LATEX\25 Junio del 
-2014\Proyecto1.aux")
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 76.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 76.
+("C:\Users\Administrador\Dropbox\Trabajo de Grado\Documento\TrabajoFinal\25Juni
+odel2014\Proyecto1.aux")
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 77.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 77.
 Package rerunfilecheck Info: File `Proyecto1.out' has not changed.
 (rerunfilecheck)             Checksum: CF5E9CE1E7222F83D6198680AAC2A2B5;1768.
  ) 
 Here is how much of TeX's memory you used:
- 18887 strings out of 494045
- 325476 string characters out of 3145945
- 454861 words of memory out of 3000000
- 21377 multiletter control sequences out of 15000+200000
+ 18889 strings out of 494045
+ 325635 string characters out of 3145945
+ 454900 words of memory out of 3000000
+ 21378 multiletter control sequences out of 15000+200000
  23448 words of font info for 59 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
  63i,12n,57p,1241b,868s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1526,9 +1543,9 @@ X\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1728.pk> <C:\Users\Administrador\A
 ppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecrm1200.pk><C:/Prog
 ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Program 
 Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on Proyecto1.pdf (32 pages, 614311 bytes).
+Output written on Proyecto1.pdf (32 pages, 615070 bytes).
 PDF statistics:
- 1298 PDF objects out of 1440 (max. 8388607)
- 174 named destinations out of 1000 (max. 500000)
+ 1300 PDF objects out of 1440 (max. 8388607)
+ 175 named destinations out of 1000 (max. 500000)
  252 words of extra memory for PDF output out of 10000 (max. 10000000)
 
