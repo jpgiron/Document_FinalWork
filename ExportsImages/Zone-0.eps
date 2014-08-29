@@ -1,0 +1,2289 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 0 0 1428 673
+%%Orientation: Portrait
+%%DocumentNeededResources: font Helvetica
+%%+ font Courier
+%%Pages: (atend)
+%%EndComments
+
+%%BeginDefaults
+%%PageBoundingBox: 0 0 1428 673
+%%EndDefaults
+%%BeginProlog
+%=== <string1> <string2> strcat <string>
+
+/strcat
+{
+  2 dict begin
+    /s2 exch def
+    /s1 exch def
+    
+    s1 length s2 length add string
+    dup 0 s1 putinterval
+    dup s1 length s2 putinterval
+  end
+} bind def
+
+
+%=== <string> getLines <array of strings>
+
+/getLines
+{
+  4 dict begin
+    /str exch def                         % input string
+    /returnedArray str length array def   % array to return
+    /i 0 def                              % current index in array
+    /line () def                          % current line in array
+
+    % Browse string
+    str
+    {
+      % If character is a new line
+      dup 10 eq
+      {
+        % Delete character from stack
+        pop
+        % Put line at current position in array
+        returnedArray i line put
+        /i i 1 add def
+        % Reinitialize current line
+        /line () def
+      }
+      % If character is not a new line
+      {
+        % Make a single character string with current char
+        1 string dup 0 4 -1 roll put
+        % Concatenate to current line
+        line exch strcat /line exch def
+      }
+      ifelse
+    } forall
+    % Add last line to returned array if needed
+    line length 0 ne { returnedArray i line put } { /i i 1 sub def } ifelse
+    % Make copy of returned array to limit memory usage
+    [
+    0 1 i
+    {
+      returnedArray exch get
+    } for
+    ]
+  end
+} bind def
+
+
+%=== <string> <width> splitString <array of strings>
+
+/splitString
+{
+  10 dict begin
+    /width exch def
+    /splittedString exch def
+    /stringLength splittedString length def
+    /returnedArray stringLength array def
+    /lastIndex 0 def
+    /line () def
+    /word () def
+    /firstWord true def
+    /startOfLine true def
+
+    % Browse string to split with an extra space at the end
+    splittedString ( ) strcat
+    {
+      % Get current char
+      /curChar exch def
+      % If current char is a space or a return and its not the beginning of the line
+      curChar 32 eq curChar 10 eq or startOfLine not and
+      {
+        % Check width for current line + space + word
+        word stringwidth pop
+        firstWord not line length 0 ne and
+        {
+          line stringwidth pop add
+          ( ) stringwidth pop add
+        } if
+        % If line will be too wide
+        width gt
+        {
+          % Append last line to array to return if any
+          line length 0 ne
+          {
+            % Add a non printing null character to mark space place
+            returnedArray lastIndex line (\0) strcat put
+            /lastIndex lastIndex 1 add def
+          } if
+          % Reset line
+          /line word def
+        }
+        % If line isn't too wide
+        {
+          % Concatenate space and word to current line
+          firstWord line length 0 eq or
+          { /line word def }
+          { /line line ( ) strcat word strcat def }
+          ifelse
+        } ifelse
+        % Reset current word
+        /word () def
+        /firstWord false def
+        % If character was a return
+        curChar 10 eq
+        {
+          % New line, adding a non printing null character to mark return place
+          returnedArray lastIndex line (\0) strcat put
+          /lastIndex lastIndex 1 add def
+          /line () def
+          /firstWord true def
+          /startOfLine true def
+        } if
+      }
+      % If current char is not a space or beginning of the line
+      {
+        % If character is a new line (and we're at line start)
+        curChar 10 eq
+        {
+          % Just add an empty line with a \0 for the carriage return to the returned array
+          returnedArray lastIndex (\0) put
+          /lastIndex lastIndex 1 add def
+          % Next line
+          /line () def
+          /firstWord true def
+        }
+        % If character is not a new line
+        {
+          % If character is not a space, we're not at the beginning of the line anymore
+          curChar 32 ne { /startOfLine false def } if
+          % Put current char in a 1 character string
+          1 string dup 0 curChar put
+          % Special case: if the word is already too long and more than 1 character long
+          dup stringwidth pop word stringwidth pop add
+          width gt word length 1 ge and
+          {
+            % If there was a current line, add it to returned array
+            line length 0 ne
+            {
+              % Add non-printing null character to mark space place
+              returnedArray lastIndex line (\0) strcat put
+              /lastIndex lastIndex 1 add def
+            } if
+            % Add word to returned array
+            returnedArray lastIndex word put
+            /lastIndex lastIndex 1 add def
+            % Reset line and word
+            /line () def
+            /word () def
+            /firstWord false def
+          } if
+          % Append current char to current word
+          word exch strcat /word exch def
+        } ifelse
+      } ifelse
+    } forall
+    % Append last line (if any) to returned array
+    line length 0 ne
+    {
+      returnedArray lastIndex line put
+      /lastIndex lastIndex 1 add def
+    } if
+    % Return significant elements in built array
+    returnedArray 0 lastIndex getinterval
+  end
+} bind def
+
+
+%=== <red> <green> <blue> setTextBackgroundColor -
+
+/textBackgroundColor [ 1.0 1.0 1.0 ] def
+
+/setTextBackgroundColor
+{
+  textBackgroundColor exch 2 exch put
+  textBackgroundColor exch 1 exch put
+  textBackgroundColor exch 0 exch put
+} bind def
+
+
+%=== <mark> { <index> <red> <green> <blue> }* setTextColors -
+
+% Array for area start indices - elements are integers
+/areaStartIndices 0 array def
+% Array for area colors - elements are 3-element arrays (red, green, blue)
+/areaColors 0 array def
+
+/setTextColors
+{
+  % Get number of areas
+  counttomark 4 idiv
+  % Create array for start indices and for colors
+  dup array /areaStartIndices exch def
+  dup array /areaColors exch def
+  % Browse stack content
+  1 sub -1 0      %for
+  {
+    % Array for color
+    3 array dup                         % start red green blue i color-array color-array
+    6 -1 roll                           % start green blue i color-array color-array red
+    0 exch put dup                      % start green blue i color-array color-array
+    5 -1 roll                           % start blue i color-array color-array green
+    1 exch put dup                      % start blue i color-array color-array
+    4 -1 roll                           % start i color-array color-array blue
+    2 exch put                          % start i color-array
+    % Put color in area colors
+    areaColors 2 index 3 -1 roll put    % start i
+    % Put start index in area start indices
+    areaStartIndices exch 3 -1 roll put
+  } for
+  cleartomark
+} bind def
+
+
+%=== <x> <y> <hAlign> <vAlign> <text> <justify> <underline> drawString -
+
+/drawString
+{
+  % Get area start indices and colors in local dictionary
+  areaStartIndices areaColors
+  16 dict begin
+    /areaColors exch def
+    /areaStartIndices exch def
+    
+    /underline exch def
+    /justify exch def
+    getLines /lines exch def
+    /vAlign exch def
+    /hAlign exch def
+    /y exch def
+    /x exch def
+    
+    % Get current font height
+    /curFontBBox currentfont /FontBBox get def
+    /curFontMatrix currentfont /FontMatrix get def
+    /curFontBBox load 2 get /curFontBBox load 3 get curFontMatrix transform exch pop
+    dup /baseLineHeight exch def
+    /curFontBBox load 0 get /curFontBBox load 1 get curFontMatrix transform exch pop
+    sub /lineHeight exch def
+    
+    % Indices in text and in area arrays
+    /charIndex 0 def
+    /areaIndex 0 def
+    
+    % Compute coordinates for text from given coordinates and alignments
+    x
+    hAlign justify ne
+    {
+      % Compute maximum display length for lines in string to print
+      /width 0 def
+      lines
+      {
+        stringwidth pop dup width gt { /width exch def } { pop } ifelse
+      } forall
+      % Adjust x coordinate
+      justify hAlign sub width mul 2 div add
+    } if
+    y baseLineHeight sub
+    vAlign 0 le
+    {
+      lines length lineHeight mul vAlign 0 eq { 2 div } if add
+    } if
+    % Draw text
+    moveto
+    % Browse lines
+    lines
+    {
+      gsave
+        dup stringwidth pop /width exch def
+        justify 0 ge
+        {
+          width
+          justify 0 eq { 2 div } if
+          neg 0 rmoveto
+        } if
+        % Bounding box for text if needed
+        true textBackgroundColor { -1.0 eq and } forall not
+        {
+          gsave
+            textBackgroundColor { } forall setrgbcolor
+            0 setlinewidth
+            0 baseLineHeight rlineto
+            width 0 rlineto
+            0 lineHeight neg rlineto
+            width neg 0 rlineto
+            closepath
+            fill
+          grestore
+        } if
+        % Text underlining if needed
+        underline 1 eq
+        {
+          gsave
+            areaColors 0 get dup 0 get exch dup 1 get exch 2 get setrgbcolor
+            1 setlinewidth
+            0 -2 rmoveto
+            width 0 rlineto
+            stroke
+          grestore
+        } if
+        % Browse text
+        {
+          % If index is the start of the next area
+          areaIndex areaStartIndices length lt
+          {
+            charIndex areaStartIndices areaIndex get eq
+            {
+              % If it is, change color
+              areaColors areaIndex get 0 get
+              areaColors areaIndex get 1 get
+              areaColors areaIndex get 2 get
+              setrgbcolor
+              % Next area
+              /areaIndex areaIndex 1 add def
+            } if
+          } if
+          % Print current character
+          1 string dup 0 4 -1 roll put show
+          % Next character
+          /charIndex charIndex 1 add def
+        } forall
+      grestore
+      % Next line
+      0 lineHeight neg rmoveto
+      % One character for the new line
+      /charIndex charIndex 1 add def
+    } forall
+  end
+} bind def
+
+
+%=== <xCenter> <yCenter> <width> <text> <justify> <h-shrink> <underline> drawTextBox -
+
+/drawTextBox
+{
+  % Get area start indices and colors in local dictionary
+  areaStartIndices areaColors
+  18 dict begin
+    /areaColors exch def
+    /areaStartIndices exch def
+    
+    /underline exch def
+    /hShrink exch def
+    /justify exch def
+    /text exch def
+    /width exch def
+    /yCenter exch def
+    /xCenter exch def
+    
+    % Get current font height
+    /curFontBBox currentfont /FontBBox get def
+    /curFontMatrix currentfont /FontMatrix get def
+    /curFontBBox load 2 get /curFontBBox load 3 get curFontMatrix transform exch pop
+    dup /baseLineHeight exch def
+    /curFontBBox load 0 get /curFontBBox load 1 get curFontMatrix transform exch pop
+    sub /lineHeight exch def
+    
+    % Indices in text and in area arrays
+    /charIndex 0 def
+    /areaIndex 0 def
+    /lastColor [ 0.0 0.0 0.0 ] def
+    
+    % Split string according to width
+    text width splitString
+    % If text box should shrink to shortest line
+    dup
+    hShrink 1 eq
+    {
+      % Set width to length of longest line
+      /maxLength 0 def
+      {
+        stringwidth pop
+        dup maxLength gt { /maxLength exch def } { pop } ifelse
+      } forall
+      width maxLength gt { /width maxLength def } if
+    }
+    {
+      pop
+    } ifelse
+    % Compute first line Y coordinate
+    dup length lineHeight mul 2 div baseLineHeight sub yCenter add
+    % Move to center point in first line
+    newpath xCenter exch moveto
+    % Browse split string array
+    {
+      % Set back last color, that may have been forgotten by the grestore
+      lastColor 0 get lastColor 1 get lastColor 2 get setrgbcolor
+      gsave
+        % Draw justified string
+        dup stringwidth pop /strWidth exch def
+        justify 0 eq
+        {
+          % Center
+          strWidth 2 div neg 0 rmoveto
+        }
+        {
+          justify 0 lt
+          {
+            % Left
+            width 2 div neg 0 rmoveto
+          }
+          {
+            % Right
+            strWidth width 2 div exch sub 0 rmoveto
+          } ifelse
+        } ifelse
+        % Text bounding box if needed
+        true textBackgroundColor { -1.0 eq and } forall not
+        {
+          gsave
+            textBackgroundColor { } forall setrgbcolor
+            0 baseLineHeight rlineto
+            strWidth 0 rlineto
+            0 lineHeight neg rlineto
+            strWidth neg 0 rlineto
+            closepath
+            fill
+          grestore
+        } if
+        % Text underlining if needed
+        underline 1 eq
+        {
+          gsave
+            areaColors 0 get dup 0 get exch dup 1 get exch 2 get setrgbcolor
+            1 setlinewidth
+            0 -2 rmoveto
+            strWidth 0 rlineto
+            stroke
+          grestore
+        } if
+        % Browse text
+        {
+          % If index is the start of the next area
+          areaIndex areaStartIndices length lt
+          {
+            charIndex areaStartIndices areaIndex get eq
+            {
+              % If it is, change color
+              /lastColor areaColors areaIndex get def
+              lastColor 0 get lastColor 1 get lastColor 2 get setrgbcolor
+              % Next area
+              /areaIndex areaIndex 1 add def
+            } if
+          } if
+          % Print current character if printable
+          dup 0 ne { 1 string dup 0 4 -1 roll put show } { pop } ifelse
+          % Next character
+          /charIndex charIndex 1 add def
+        } forall
+      grestore
+      % Go one line down
+      0 lineHeight neg rmoveto
+    } forall
+  end
+} bind def
+
+
+% === mark <x1> <x2> ... <xn> max <xmax>
+
+/max
+{
+  1 dict begin
+    /result exch def
+    {
+      dup mark eq { pop exit } if
+      dup result gt { /result exch def } { pop } ifelse
+    } loop
+    result
+  end
+} def %bind def
+
+
+% === mark <x1> <x2> ... <xn> min <xmin>
+
+/min
+{
+  1 dict begin
+    /result exch def
+    {
+      dup mark eq { pop exit } if
+      dup result lt { /result exch def } { pop } ifelse
+    } loop
+    result
+  end
+} def %bind def
+
+
+%=== <r> <g> <b> rgb2hsv <h> <s> <v>
+
+/rgb2hsv
+{
+  11 dict begin
+    /b exch def
+    /g exch def
+    /r exch def
+    /h 0 def /s 0 def
+    /v mark r g b max def
+    /min_coord mark r g b min def
+    /dist v min_coord sub def
+    v 0 ne { /s dist v div def } if
+    s 0 eq
+    {
+      /h -1 def
+    }
+    {
+      /rr v r sub dist div def
+      /gg v g sub dist div def
+      /bb v b sub dist div def
+      v r eq
+      {
+        min_coord g eq
+        { /h 5 bb add def }
+        { /h 1 gg sub def }
+        ifelse
+      }
+      {
+        v g eq
+        {
+          min_coord b eq
+          { /h 1 rr add def }
+          { /h 3 bb sub def }
+          ifelse
+        }
+        {
+          min_coord r eq
+          { /h 3 gg add def }
+          { /h 5 rr sub def }
+          ifelse
+        } ifelse
+      } ifelse
+      /h h 60 mul def
+    } ifelse
+    h s v
+  end
+} def %bind def
+
+
+%=== <h> <s> <v> hsv2rgb <r> <g> <b>
+
+/hsv2rgb
+{
+  12 dict begin
+    /v exch def
+    /s exch def
+    /h exch def
+    /r 0 def /g 0 def /b 0 def
+    h -1 eq h 360 eq or { /h 0 def } if
+    /hh h 60.0 div def
+    /i hh cvi def
+    /f hh i sub def
+    /p1 1 s sub v mul def
+    /p2 1 f s mul sub v mul def
+    /p3 1 1 f sub s mul sub v mul def
+    [ [ v p3 p1 ]
+      [ p2 v p1 ]
+      [ p1 v p3 ]
+      [ p1 p2 v ]
+      [ p3 p1 v ]
+      [ v p1 p2 ]
+    ] i get { } forall
+  end
+} def %bind def
+
+
+%=== <r> <g> <b> <s_factor> <v_factor> alterColor <r> <g> <b>
+
+/alterColor
+{
+  2 dict begin
+    /v_factor exch def
+    /s_factor exch def
+    s_factor 1 ne v_factor 1 ne or
+    {
+      rgb2hsv
+      mark exch v_factor mul 1 min exch
+      mark exch s_factor mul 1 min exch
+      hsv2rgb
+    } if
+  end
+} def %bind def
+
+
+%=== <x_left> <x_right> <y_bottom> <r_bottom> <g_bottom> <b_bottom> <y_top> <r_top> <g_top> <b_top> boxGradientFill -
+/gradientResolution 0.2 def
+
+/boxGradientFill
+{
+  14 dict begin
+    /b_top exch def /g_top exch def /r_top exch def
+    /y_top exch def
+    /b exch def /g exch def /r exch def
+    /y_bottom exch def
+    /x_right exch def /x_left exch def
+    
+    /y_span y_top y_bottom sub gradientResolution div def
+    y_span 0 ne
+    {
+      /r_incr r_top r sub y_span div def
+      /g_incr g_top g sub y_span div def
+      /b_incr b_top b sub y_span div def
+      gradientResolution setlinewidth
+      y_bottom gradientResolution y_top
+      {
+        r g b setrgbcolor
+        x_right exch dup x_left exch moveto lineto stroke
+        /r r r_incr add def /g g g_incr add def /b b b_incr add def
+      } for
+    } if
+  end
+} def %bind def
+
+
+%=== pathGradientFill
+
+/pathGradientSpec [ [ 0 1 1 ] [ 1 1 1 ] ] def
+
+/pathGradientFill
+{
+  10 dict begin
+    pathbbox
+    /y_top exch def /x_right exch def
+    /y_bottom exch def /x_left exch def
+    clip
+    1 1 pathGradientSpec length 1 sub
+    {
+      dup
+      1 sub pathGradientSpec exch get { } forall
+      /bottom_v_factor exch def /bottom_s_factor exch def /bottom_y_factor exch def
+      pathGradientSpec exch get { } forall
+      /top_v_factor exch def /top_s_factor exch def /top_y_factor exch def
+      gsave
+        x_left x_right
+        y_bottom y_top y_bottom sub bottom_y_factor mul add
+        currentrgbcolor bottom_s_factor bottom_v_factor alterColor
+        y_bottom y_top y_bottom sub top_y_factor mul add
+        currentrgbcolor top_s_factor top_v_factor alterColor
+        boxGradientFill
+      grestore
+    } for
+} def %bind def
+
+ISOLatin1Encoding aload length array astore /ISOLatin1EuroEncoding exch def
+ISOLatin1EuroEncoding 164 /Euro put
+%%EndProlog
+
+%%BeginSetup
+
+/Helvetica findfont dup length dict begin
+{ 1 index /FID ne { def } { pop pop } ifelse } forall
+/Encoding ISOLatin1EuroEncoding def
+currentdict end
+/Helvetica-ISOLatin1 exch definefont pop
+/Courier findfont dup length dict begin
+{ 1 index /FID ne { def } { pop pop } ifelse } forall
+/Encoding ISOLatin1EuroEncoding def
+currentdict end
+/Courier-ISOLatin1 exch definefont pop
+/Helvetica findfont dup length dict begin
+{ 1 index /FID ne { def } { pop pop } ifelse } forall
+/Encoding ISOLatin1EuroEncoding def
+currentdict end
+/Helvetica-ISOLatin1 exch definefont pop
+1 setlinejoin
+
+%%EndSetup
+
+%%Page: 1 1
+
+%%BeginPageSetup
+0.800000 0.800000 scale
+%%EndPageSetup
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+451 126 moveto
+451 71 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+693 258 moveto
+693 214 lineto
+451 214 lineto
+451 181 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1309 346 moveto
+1309 302 lineto
+1485 302 lineto
+1485 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+308 544 lineto
+308 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+660 544 lineto
+660 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+979 258 moveto
+979 225 lineto
+1287 225 lineto
+1287 192 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+814 544 lineto
+814 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1155 258 moveto
+1155 225 lineto
+1287 225 lineto
+1287 192 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1309 412 moveto
+1309 346 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1617 258 moveto
+1617 192 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+407 258 moveto
+407 214 lineto
+451 214 lineto
+451 181 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+495 544 lineto
+495 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+539 258 moveto
+539 214 lineto
+451 214 lineto
+451 181 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+858 192 moveto
+858 126 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+979 544 lineto
+979 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1309 258 moveto
+1309 225 lineto
+1287 225 lineto
+1287 192 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+858 258 moveto
+858 192 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1309 346 moveto
+1309 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+561 346 moveto
+561 302 lineto
+858 302 lineto
+858 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+561 346 moveto
+561 302 lineto
+539 302 lineto
+539 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+979 489 moveto
+979 456 lineto
+1309 456 lineto
+1309 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+451 181 moveto
+451 126 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1320 489 moveto
+1320 456 lineto
+1309 456 lineto
+1309 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1309 346 moveto
+1309 302 lineto
+1617 302 lineto
+1617 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+1320 544 lineto
+1320 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+308 489 moveto
+308 456 lineto
+561 456 lineto
+561 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+561 412 moveto
+561 346 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1496 489 moveto
+1496 456 lineto
+1309 456 lineto
+1309 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+561 346 moveto
+561 302 lineto
+407 302 lineto
+407 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1155 489 moveto
+1155 456 lineto
+1309 456 lineto
+1309 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1485 258 moveto
+1485 225 lineto
+1287 225 lineto
+1287 192 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+495 489 moveto
+495 456 lineto
+561 456 lineto
+561 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+1155 544 lineto
+1155 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1617 192 moveto
+1617 126 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+561 346 moveto
+561 302 lineto
+693 302 lineto
+693 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 665 moveto
+737 588 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+814 489 moveto
+814 456 lineto
+561 456 lineto
+561 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 731 moveto
+737 665 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+561 346 moveto
+561 302 lineto
+187 302 lineto
+187 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1309 346 moveto
+1309 302 lineto
+1155 302 lineto
+1155 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+660 489 moveto
+660 456 lineto
+561 456 lineto
+561 412 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 588 moveto
+737 544 lineto
+1496 544 lineto
+1496 489 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1309 346 moveto
+1309 302 lineto
+979 302 lineto
+979 258 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+187 258 moveto
+187 214 lineto
+451 214 lineto
+451 181 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1287 137 moveto
+1287 82 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1287 192 moveto
+1287 137 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+22 34 moveto
+22 808 lineto
+1762 808 lineto
+1762 34 lineto
+22 34 lineto
+closepath
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+831 104 moveto
+885 104 lineto
+848 126 43 -30 30 arc
+885 148 lineto
+831 148 lineto
+868 126 43 150 210 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+858 126 48 (Idle) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1001 742 moveto
+1001 786 lineto
+1147 786 lineto
+1155 778 lineto
+1147 778 lineto
+1147 786 lineto
+1155 778 lineto
+1155 742 lineto
+1001 742 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1078 764 136 (TIMER tEnter,tOut;) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1249 324 moveto
+1369 324 lineto
+1332 346 43 -30 30 arc
+1369 368 lineto
+1249 368 lineto
+1286 346 43 150 210 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1309 346 114 (WaitSensorIR4) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+132 236 moveto
+132 280 lineto
+242 280 lineto
+230 258 lineto
+242 236 lineto
+132 236 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+187 258 84 (sIR2_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1430 467 moveto
+1430 511 lineto
+1562 511 lineto
+1550 489 lineto
+1562 467 lineto
+1430 467 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1496 489 106 (sIR2_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1216 115 moveto
+1216 159 lineto
+1358 159 lineto
+1358 115 lineto
+1216 115 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1210 131 moveto
+1222 131 lineto
+1210 143 lineto
+1222 143 lineto
+1210 131 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1287 137 128 (SET\050NOW+3,tOut\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+369 104 moveto
+369 148 lineto
+533 148 lineto
+533 104 lineto
+369 104 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+363 120 moveto
+375 120 lineto
+363 132 lineto
+375 132 lineto
+363 120 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+451 126 150 (SET\050NOW+3,tEnter\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1590 104 moveto
+1644 104 lineto
+1607 126 43 -30 30 arc
+1644 148 lineto
+1590 148 lineto
+1627 126 43 150 210 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1617 126 48 (Idle) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+671 632 moveto
+671 698 lineto
+803 698 lineto
+803 632 lineto
+671 632 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+737 665 118 (totalSpots := 300,
+freeSpots := 300) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+737 467 moveto
+737 511 lineto
+891 511 lineto
+879 489 lineto
+891 467 lineto
+737 467 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+814 489 128 (sIR4_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1254 236 moveto
+1254 280 lineto
+1364 280 lineto
+1352 258 lineto
+1364 236 lineto
+1254 236 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1309 258 84 (sIR1_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+627 236 moveto
+627 280 lineto
+759 280 lineto
+747 258 lineto
+759 236 lineto
+627 236 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+693 258 106 (sIR3_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1227 60 moveto
+1347 60 lineto
+1310 82 43 -30 30 arc
+1347 104 lineto
+1227 104 lineto
+1264 82 43 150 210 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1287 82 114 (VerifyIsaCarOut) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+66 632 moveto
+66 786 lineto
+388 786 lineto
+396 778 lineto
+388 778 lineto
+388 786 lineto
+396 778 lineto
+396 632 lineto
+66 632 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+231 709 312 (DCL
+
+/* Params Signals */
+p_freeSpots,p_totalSpots i_spots,
+
+/*Block Zone's Registers */
+freeSpots,totalSpots i_spots,pidCtrl,myCtrl PID;) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1265 467 moveto
+1265 511 lineto
+1375 511 lineto
+1363 489 lineto
+1375 467 lineto
+1265 467 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1320 489 84 (sIR2_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1089 236 moveto
+1089 280 lineto
+1221 280 lineto
+1209 258 lineto
+1221 236 lineto
+1089 236 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1155 258 106 (sIR4_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+501 324 moveto
+621 324 lineto
+584 346 43 -30 30 arc
+621 368 lineto
+501 368 lineto
+538 346 43 150 210 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+561 346 114 (WaitSensorIR2) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+479 390 moveto
+479 434 lineto
+643 434 lineto
+643 390 lineto
+479 390 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+473 406 moveto
+485 406 lineto
+473 418 lineto
+485 418 lineto
+473 406 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+561 412 150 (SET\050NOW+3, tEnter\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+391 159 moveto
+391 203 lineto
+511 203 lineto
+511 159 lineto
+391 159 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+385 175 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+397 187 lineto
+stroke
+[ ] 0 setdash
+newpath
+397 175 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+385 187 lineto
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+451 181 106 (RESET\050tEnter\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1557 170 moveto
+1557 214 lineto
+1677 214 lineto
+1677 170 lineto
+1557 170 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+1551 186 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1563 198 lineto
+stroke
+[ ] 0 setdash
+newpath
+1563 186 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1551 198 lineto
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1617 192 106 (RESET\050tOut\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+369 49 moveto
+533 49 lineto
+496 71 43 -30 30 arc
+533 93 lineto
+369 93 lineto
+406 71 43 150 210 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+451 71 158 (VerifyIsaCarEntering) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+484 236 moveto
+484 280 lineto
+594 280 lineto
+582 258 lineto
+594 236 lineto
+484 236 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+539 258 84 (sIR3_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+341 236 moveto
+341 280 lineto
+473 280 lineto
+461 258 lineto
+473 236 lineto
+341 236 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+407 258 106 (sIR2_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+253 467 moveto
+253 511 lineto
+363 511 lineto
+351 489 lineto
+363 467 lineto
+253 467 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+308 489 84 (sIR1_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+715 720 moveto
+759 720 lineto
+759 731 11 -90 90 arc
+759 742 lineto
+715 742 lineto
+715 731 11 90 270 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+605 467 moveto
+605 511 lineto
+715 511 lineto
+703 489 lineto
+715 467 lineto
+605 467 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+660 489 84 (sIR4_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1227 390 moveto
+1227 434 lineto
+1391 434 lineto
+1391 390 lineto
+1227 390 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1221 406 moveto
+1233 406 lineto
+1221 418 lineto
+1233 418 lineto
+1221 406 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1309 412 150 (SET\050NOW+3, tOut\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+710 566 moveto
+764 566 lineto
+727 588 43 -30 30 arc
+764 610 lineto
+710 610 lineto
+747 588 43 150 210 arc
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+737 588 48 (Idle) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1227 170 moveto
+1227 214 lineto
+1347 214 lineto
+1347 170 lineto
+1227 170 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+1221 186 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1233 198 lineto
+stroke
+[ ] 0 setdash
+newpath
+1233 186 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1221 198 lineto
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1287 192 106 (RESET\050tOut\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+798 170 moveto
+798 214 lineto
+918 214 lineto
+918 170 lineto
+798 170 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+[ ] 0 setdash
+newpath
+792 186 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+804 198 lineto
+stroke
+[ ] 0 setdash
+newpath
+804 186 moveto
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+792 198 lineto
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+858 192 106 (RESET\050tEnter\051) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+418 467 moveto
+418 511 lineto
+572 511 lineto
+560 489 lineto
+572 467 lineto
+418 467 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+495 489 128 (sIR1_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+924 467 moveto
+924 511 lineto
+1034 511 lineto
+1022 489 lineto
+1034 467 lineto
+924 467 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+979 489 84 (sIR3_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1584 236 moveto
+1584 280 lineto
+1650 280 lineto
+1638 258 lineto
+1650 236 lineto
+1584 236 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1617 258 40 (tOut) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1089 467 moveto
+1089 511 lineto
+1221 511 lineto
+1209 489 lineto
+1221 467 lineto
+1089 467 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1155 489 106 (sIR3_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+814 236 moveto
+814 280 lineto
+902 280 lineto
+890 258 lineto
+902 236 lineto
+814 236 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+858 258 62 (tEnter) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+924 236 moveto
+924 280 lineto
+1034 280 lineto
+1022 258 lineto
+1034 236 lineto
+924 236 lineto
+closepath
+gsave
+  1.0 1.0 1.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 1.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+979 258 84 (sIR4_Zone) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1419 236 moveto
+1419 280 lineto
+1551 280 lineto
+1539 258 lineto
+1551 236 lineto
+1419 236 lineto
+closepath
+gsave
+  1.0 1.0 0.0 setrgbcolor
+  fill
+grestore
+stroke
+/Helvetica-ISOLatin1 findfont 11 scalefont setfont
+
+1.0 1.0 0.0 setTextBackgroundColor
+mark
+0 0.0 0.0 0.0
+setTextColors
+1485 258 106 (sIR1_ZoneTest) -1 1 0 drawTextBox
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1290 164 moveto
+1287 159 lineto
+1284 164 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1290 219 moveto
+1287 214 lineto
+1284 219 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1620 219 moveto
+1617 214 lineto
+1614 219 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+740 615 moveto
+737 610 lineto
+734 615 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1312 439 moveto
+1309 434 lineto
+1306 439 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1290 219 moveto
+1287 214 lineto
+1284 219 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+861 219 moveto
+858 214 lineto
+855 219 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1312 439 moveto
+1309 434 lineto
+1306 439 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+564 373 moveto
+561 368 lineto
+558 373 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+454 208 moveto
+451 203 lineto
+448 208 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+564 439 moveto
+561 434 lineto
+558 439 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1312 439 moveto
+1309 434 lineto
+1306 439 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1620 153 moveto
+1617 148 lineto
+1614 153 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1290 109 moveto
+1287 104 lineto
+1284 109 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+564 439 moveto
+561 434 lineto
+558 439 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+454 208 moveto
+451 203 lineto
+448 208 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1312 439 moveto
+1309 434 lineto
+1306 439 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+740 703 moveto
+737 698 lineto
+734 703 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+454 208 moveto
+451 203 lineto
+448 208 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1290 219 moveto
+1287 214 lineto
+1284 219 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1312 373 moveto
+1309 368 lineto
+1306 373 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+454 153 moveto
+451 148 lineto
+448 153 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+1290 219 moveto
+1287 214 lineto
+1284 219 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+861 153 moveto
+858 148 lineto
+855 153 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+454 98 moveto
+451 93 lineto
+448 98 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+564 439 moveto
+561 434 lineto
+558 439 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+454 208 moveto
+451 203 lineto
+448 208 lineto
+stroke
+[ ] 0 setdash
+newpath
+0.0 0.0 0.0 setrgbcolor
+1 setlinewidth
+564 439 moveto
+561 434 lineto
+558 439 lineto
+stroke
+showpage
+
+%%Trailer
+%%Pages: 1
+%%EOF
